@@ -1,8 +1,11 @@
+package Blocks;
 import java.awt.Color;
 
+import Game.*;
+
 public class BlockEmpty extends Block{
-	BlockEmpty(long lastUpdated){
-		super(Color.black, lastUpdated, 100000000);
+	public BlockEmpty(long lastUpdated, int x, int y){
+		super(Color.black, lastUpdated, 1000000, x, y);
 	}
 	
 	@Override

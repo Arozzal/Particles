@@ -1,3 +1,6 @@
+package Game;
+
+import Textures.TextureLoader;
 
 public class main {
 	public static void main(String[] args) throws InterruptedException {

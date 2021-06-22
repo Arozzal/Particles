@@ -1,14 +1,20 @@
+package Blocks;
 import java.awt.Color;
 
+import Game.Game;
+import Game.Grid;
+import Textures.TextureLoader;
+
 public class BlockWood extends Block{
-	BlockWood(Color color, long lastUpdated, long lifeTime){
-		super(color, lastUpdated, lifeTime);
+	public BlockWood(Color color, long lastUpdated, long lifeTime, int x, int y){
+		super(color, lastUpdated, lifeTime, x, y);
 	}
 	
 	
 	@Override
 	protected Color generateNewColor() {
-		return new Color(Game.getRandomInt(70, 100), 51, 0);
+		//return new Color(Game.getRandomInt(70, 100), 51, 0);
+		return TextureLoader.loader.getPixel(BlockId.Wood, x, y, 0);
 	}	
 
 	@Override

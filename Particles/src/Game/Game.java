@@ -1,29 +1,21 @@
-import java.awt.Button;
-import java.awt.Canvas;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
+package Game;
+
 import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.Rectangle;
-import java.awt.Shape;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.image.BufferStrategy;
-import java.awt.image.ImageObserver;
-import java.nio.IntBuffer;
-import java.text.AttributedCharacterIterator;
 import java.time.ZonedDateTime;
 import java.util.Date;
-import java.util.concurrent.ThreadLocalRandom;
+
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 
+
+import Blocks.*;
 
 
 public class Game  {
@@ -43,6 +35,9 @@ public class Game  {
 	static long elapsedTime = 0;
 	static long fps = 1000 / 1000; 
 	
+	int currMouseButton;
+	boolean isClicking;
+	
 	public void initGrid(int sx, int sy, int bs) {
 		sizex = sx;
 		sizey = sy;
@@ -57,6 +52,14 @@ public class Game  {
 	
 	public static int getRandomInt(int min, int max) {
 		return (int) (Math.random() * (max - min)) + min;
+	}
+	
+	public static boolean roll(int chance) {
+		int roll = getRandomInt(0, chance);
+		if(roll == 0)
+			return true;
+		
+		return false;
 	}
 	
 	public void run() throws InterruptedException {
@@ -96,29 +99,20 @@ public class Game  {
         
         frame.addMouseListener(new MouseListener() {
         	@Override public void mouseReleased(MouseEvent e) {
+        		isClicking = false;
         		
-        		int sx = e.getX() / blockSize;
-        		int sy = e.getY() / blockSize;
-        		
-        		for(int x = -20; x < 20; x++) {
-        			for(int y = -20; y < 20; y++) {
-        				if(Math.sqrt(x * x + y * y) <= 20) {
-	        				if(e.getButton() == MouseEvent.BUTTON1) {
-		        				grid.setBlock(BlockId.values()[butId], sx + x, sy + y);   
-	        				}
-	        				if(e.getButton() == MouseEvent.BUTTON3) {
-	        					grid.setBlock(BlockId.None, sx + x, sy + y); 
-	        				}
-        				}
-        			}
-        		}
         		  		
         	}
-			@Override public void mousePressed(MouseEvent e) {}
+			@Override public void mousePressed(MouseEvent e) {
+				isClicking = true;
+				currMouseButton = e.getButton();
+			}
 			@Override public void mouseEntered(MouseEvent e) {}
 			@Override public void mouseClicked(MouseEvent e) {}
 			@Override public void mouseExited(MouseEvent e) {}
 		});
+        
+        
         
         while(true) {
         	long currentTime = getMillis();
@@ -129,7 +123,7 @@ public class Game  {
         		elapsedTime = 0;
         		currentFrame++;
         		
-        		update();
+        		update(frame);
         		
         		frame.repaint();
         	}
@@ -137,23 +131,54 @@ public class Game  {
         }
     }
     
-    public void update() {
+    public void update(JFrame frame) {
+    	
+    	if(isClicking) {
+    		int sx, sy;
+    		
+    		try {
+    			sx = frame.getMousePosition().x / blockSize;
+        		sy = frame.getMousePosition().y / blockSize;
+    		}
+    		catch(NullPointerException e) {
+    			sx = -10000;
+    			sy = -10000;
+    		}
+        	
+    		
+    		for(int x = -20; x < 20; x++) {
+    			for(int y = -20; y < 20; y++) {
+    				if(Math.sqrt(x * x + y * y) <= 20) {
+        				if(currMouseButton == MouseEvent.BUTTON1) {
+	        				grid.setBlock(BlockId.values()[butId], sx + x, sy + y);   
+        				}
+        				if(currMouseButton == MouseEvent.BUTTON3) {
+        					grid.setBlock(BlockId.None, sx + x, sy + y); 
+        				}
+    				}
+    			}
+    		}
+        }
     	
     	for(int y = sizey - 1; y >= 0; y--) {
     		for(int x = 0; x < sizex; x++) {
         		Block block = grid.get(x, y);
-        		if(block.lastUpdated >= currentFrame) {
+        		
+        		if(block.isId(BlockId.None))
+        			continue;
+        		
+        		if(block.getLastUpdated() >= currentFrame) {
             		continue;
             	}
             		
-            	block.lifeTime--;
+            	block.setLifeTime(block.getLifeTime() - 1);
 
-    			if (block.lifeTime <= 0){
+    			if (block.getLifeTime() <= 0){
     				grid.setBlock(BlockId.None, x, y);
     				continue;
     			}
             		
-            	block.lastUpdated = currentFrame;
+            	block.setLastUpdated(currentFrame);
         		block.update(x, y, grid);
         	}
     	}
@@ -163,13 +188,15 @@ public class Game  {
     
     public class Window extends JLabel{
     	
-    	@Override
+		private static final long serialVersionUID = -3280536400661865030L;
+
+		@Override
     	protected void paintComponent(Graphics g) {
     		super.paintComponent(g);
     		
     		for(int y = 0; y < sizey; y++) {
     			for(int x = 0; x < sizex; x++) {
-            		g.setColor(grid.get(x, y).color);
+            		g.setColor(grid.get(x, y).getColor());
                 	g.fillRect(x * blockSize, y * blockSize, blockSize, blockSize);
                 }
             }   

@@ -1,9 +1,13 @@
+package Blocks;
 import java.awt.Color;
+
+import Game.Game;
+import Game.Grid;
 
 public class BlockSmoke extends Block{
 
-	public BlockSmoke(Color color, long lastUpdated, long lifeTime){
-		super(color, lastUpdated, lifeTime);
+	public BlockSmoke(Color color, long lastUpdated, long lifeTime, int x, int y){
+		super(color, lastUpdated, lifeTime, x, y);
 	}
 	
 	@Override
@@ -35,12 +39,12 @@ public class BlockSmoke extends Block{
 
 	@Override
 	public void update(int x, int y, Grid grid) {
-		if (Game.getRandomInt(0, 100) == 1)
+		if (Game.roll(100))
 		{
 			return;
 		}
 
-		if (Game.getRandomInt(0, 5) != 1)
+		if (Game.roll(5))
 		{
 			return;
 		}

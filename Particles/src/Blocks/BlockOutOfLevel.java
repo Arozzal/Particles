@@ -1,11 +1,14 @@
+package Blocks;
 import java.awt.Color;
+
+import Game.*;
 
 public class BlockOutOfLevel extends Block{
 	
 	
 	
-	BlockOutOfLevel(long lastUpdated, long lifeTime){
-		super(Color.white, lastUpdated, lifeTime);
+	public BlockOutOfLevel(long lastUpdated, long lifeTime, int x, int y){
+		super(Color.white, lastUpdated, lifeTime, x, y);
 	}
 	
 	@Override

@@ -1,3 +1,4 @@
+package Blocks;
 
 public enum BlockId {
 	None,
@@ -6,5 +7,6 @@ public enum BlockId {
 	Wood,
 	Fire,
 	Smoke,
-	OutofLevel,
+	Corruption,
+	OutofLevel
 }

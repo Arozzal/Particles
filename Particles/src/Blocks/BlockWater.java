@@ -1,13 +1,19 @@
+package Blocks;
 import java.awt.Color;
 
+import Game.Game;
+import Game.Grid;
+import Textures.TextureLoader;
+
 public class BlockWater extends Block{
-	BlockWater(Color color, long lastUpdated, long lifeTime){
-		super(color, lastUpdated, lifeTime);
+	public BlockWater(Color color, long lastUpdated, long lifeTime, int x, int y){
+		super(color, lastUpdated, lifeTime, x, y);
 	}
 	
 	@Override
 	protected Color generateNewColor() {
-		return new Color(24,(int) (Math.random() * (220 - 200)) + 200, 226);
+		return TextureLoader.loader.getPixel(BlockId.Water, x, y, 1);
+		//return new Cdsdsolor(24,(int) (Math.random() * (220 - 200)) + 200, 226);
 	}
 	
 	@Override
@@ -27,10 +33,14 @@ public class BlockWater extends Block{
 	
 	@Override
     public void update(int x, int y, Grid grid){
-		if (Game.getRandomInt(0, 100) == 1){
+		if (Game.roll(100)){
 			return;
 		}
-
+		
+		this.x = x;
+		this.y = y;
+		setColor(generateNewColor());
+		
 		if (grid.get(x, y + 1).isSolid() == false){
 			grid.move(x, y, x, y + 1);
 			return;
