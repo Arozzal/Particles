@@ -11,7 +11,7 @@ public class BlockSand extends Block{
 	
 	
 	public BlockSand(Color color, long lastUpdated, long lifeTime, int x, int y){
-		super(color, lastUpdated, lifeTime, x, y);
+		super(color, lastUpdated, lifeTime, x, y, 21.0f);
 	}
 	
 	@Override
@@ -56,25 +56,24 @@ public class BlockSand extends Block{
     		return;
     	}
     	
-    	if(!Game.roll(15)) {
-    		return;
+    	
+    	if(grid.get(x, y+1).isLiquid()) {
+    		checkForDensitySwap(x, y, x, y + 1, grid);
     	}
     	
-    	
-    	if(grid.get(x, y+1).isId(BlockId.Water)) {
-    		grid.swap(x, y, x, y + 1);
-    		return;
+    	if(grid.get(x + 1, y+1).isLiquid()) {
+    		checkForDensitySwap(x, y, x + 1, y + 1, grid);
     	}
     	
-    	if(grid.get(x - 1, y+1).isId(BlockId.Water)) {
-    		grid.swap(x, y, x - 1, y + 1);
-    		return;
+    	if(grid.get(x - 1, y+1).isLiquid()) {
+    		checkForDensitySwap(x, y, x - 1, y + 1, grid);
     	}
-    	
-    	if(grid.get(x + 1, y+1).isId(BlockId.Water)) {
-    		grid.swap(x, y, x + 1, y + 1);
-    		return;
-    	}
+
 	}
 	
+	@Override
+	public boolean isLiquid() {
+		return false;
+	}
+
 }

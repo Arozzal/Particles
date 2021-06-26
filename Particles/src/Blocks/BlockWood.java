@@ -7,7 +7,7 @@ import Textures.TextureLoader;
 
 public class BlockWood extends Block{
 	public BlockWood(Color color, long lastUpdated, long lifeTime, int x, int y){
-		super(color, lastUpdated, lifeTime, x, y);
+		super(color, lastUpdated, lifeTime, x, y, 15.0f);
 	}
 	
 	
@@ -36,5 +36,10 @@ public class BlockWood extends Block{
 	public void update(int x, int y, Grid grid) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	@Override
+	public boolean isLiquid() {
+		return false;
 	}
 }

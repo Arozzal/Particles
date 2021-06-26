@@ -76,9 +76,11 @@ public class TextureLoader {
 	
 	public TextureLoader(){
 		containers = new TextureContainer[BlockId.OutofLevel.ordinal()];
+		initTexture("back", BlockId.None);
 		initTexture("wood", BlockId.Wood);
 		initTexture("sand", BlockId.Sand);
-		initAnimation("water", BlockId.Water, 9);
+		initAnimation("water", BlockId.Water, 3);
+		initAnimation("lava", BlockId.Lava, 16);
 	}
 	
 	

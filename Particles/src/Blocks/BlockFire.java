@@ -6,7 +6,7 @@ import Game.Grid;
 
 public class BlockFire extends Block{
 	public BlockFire(Color color, long lastUpdated, long lifeTime, int x, int y){
-		super(color, lastUpdated, lifeTime, x, y);
+		super(color, lastUpdated, lifeTime, x, y, 0.01f);
 	}
 	
 	
@@ -44,7 +44,7 @@ public class BlockFire extends Block{
 
 		if(Game.roll(10)){
 			if(grid.get(x, y + 1).getId() == BlockId.None)
-				grid.setBlock(BlockId.Smoke, x, y + 1);
+				grid.generateNewBlock(BlockId.Smoke, x, y + 1);
 			return;
 		}
 
@@ -90,11 +90,13 @@ public class BlockFire extends Block{
 		{
 			if (grid.get(x + xoffset, y + yoffset).isFlammable())
 			{
-				grid.setBlock(BlockId.Fire, x + xoffset, y + yoffset);
+				grid.generateNewBlock(BlockId.Fire, x + xoffset, y + yoffset);
 			}
 		}
 	}
-
 	
-	
+	@Override
+	public boolean isLiquid() {
+		return false;
+	}
 }

@@ -7,7 +7,7 @@ public class BlockCorruption extends Block{
 	int doingChance;
 	
 	public BlockCorruption(Color color, long lastUpdated, long lifeTime, int x, int y){
-		super(color, lastUpdated, lifeTime, x, y);
+		super(color, lastUpdated, lifeTime, x, y, 0.1f);
 		
 		doingChance = Game.getRandomInt(5, 30);
 	}
@@ -71,12 +71,13 @@ public class BlockCorruption extends Block{
 				if(neighbourCount == 3) {
 					//Block overwriteBlock = grid.get(x + xx, y + yy);
 					
-					grid.setBlock(BlockId.Corruption, x + xx, y + yy);
+					grid.generateNewBlock(BlockId.Corruption, x + xx, y + yy);
 					//grid.get(x + xx, y + yy).setLifeTime(lifeTime);
 				}		
 			}	
 		}
 	}
+
 	
 	public int getNeighbourCount(int x, int y, Grid grid) {
 		int neighbourCount = 0;
@@ -93,4 +94,11 @@ public class BlockCorruption extends Block{
 		
 		return neighbourCount;
 	}
+
+
+	@Override
+	public boolean isLiquid() {
+		return false;
+	}
+
 }

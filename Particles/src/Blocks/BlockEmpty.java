@@ -2,10 +2,12 @@ package Blocks;
 import java.awt.Color;
 
 import Game.*;
+import Textures.TextureLoader;
+import Textures.TextureLoader.TextureContainer;
 
 public class BlockEmpty extends Block{
 	public BlockEmpty(long lastUpdated, int x, int y){
-		super(Color.black, lastUpdated, 1000000, x, y);
+		super(TextureLoader.loader.getPixel(BlockId.None, x, y, 0), lastUpdated, 1000000, x, y, 0);
 	}
 	
 	@Override
@@ -26,6 +28,11 @@ public class BlockEmpty extends Block{
 
 	@Override
 	public boolean isFlammable() {
+		return false;
+	}
+	
+	@Override
+	public boolean isLiquid() {
 		return false;
 	}
 }
