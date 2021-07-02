@@ -12,6 +12,7 @@ public class BlockLava extends Block{
 	
 	public BlockLava(Color color, long lastUpdated, long lifeTime, int x, int y){
 		super(color, lastUpdated, lifeTime, x, y, 20.0f);
+		grid = Game.game.grid;
 	}
 	
 	@Override

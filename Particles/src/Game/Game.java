@@ -103,9 +103,6 @@ public class Game{
 	}
 	
 	public Game() {
-		
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-
 		sizex = 1200;
 		sizey = 600;
 		blockSize = 2;

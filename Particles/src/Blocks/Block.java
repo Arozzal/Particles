@@ -10,7 +10,7 @@ public abstract class Block {
 	protected int x;
 	protected int y;
 	
-	protected Grid grid = Game.game.grid;
+	protected Grid grid;
 	
 	public Color getColor() {
 		return color;

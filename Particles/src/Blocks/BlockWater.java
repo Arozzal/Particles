@@ -8,6 +8,7 @@ import Textures.TextureLoader;
 public class BlockWater extends Block{
 	public BlockWater(Color color, long lastUpdated, long lifeTime, int x, int y){
 		super(color, lastUpdated, lifeTime, x, y, 10.0f);
+		grid = Game.game.grid;
 	}
 	
 	@Override

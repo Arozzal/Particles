@@ -16,7 +16,6 @@ public class Grid {
 		for(int y = 0; y < sizey; y++) {
 			for(int x = 0; x < sizex; x++) {
 				levelGrid[y * sizex + x] = new BlockEmpty(0, x, y);
-				//levelGrid[y * sizex + x] = new BlockWood(null, -1, 100000000);
 			}
 		}
 	}

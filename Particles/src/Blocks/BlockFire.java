@@ -7,6 +7,7 @@ import Game.Grid;
 public class BlockFire extends Block{
 	public BlockFire(Color color, long lastUpdated, long lifeTime, int x, int y){
 		super(color, lastUpdated, lifeTime, x, y, 0.01f);
+		grid = Game.game.grid;
 	}
 	
 	

@@ -10,6 +10,7 @@ public class BlockCorruption extends Block{
 		super(color, lastUpdated, lifeTime, x, y, 0.1f);
 		
 		doingChance = Game.getRandomInt(5, 30);
+		grid = Game.game.grid;
 	}
 	
 	

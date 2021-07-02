@@ -9,6 +9,7 @@ public class BlockSteam extends Block{
 
 	public BlockSteam(Color color, long lastUpdated, long lifeTime, int x, int y) {
 		super(color, lastUpdated, lifeTime, x, y, -20f);
+		grid = Game.game.grid;
 	}
 
 	@Override

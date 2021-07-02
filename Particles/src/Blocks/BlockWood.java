@@ -1,12 +1,14 @@
 package Blocks;
 import java.awt.Color;
 
+import Game.Game;
 import Game.Grid;
 import Textures.TextureLoader;
 
 public class BlockWood extends Block{
 	public BlockWood(Color color, long lastUpdated, long lifeTime, int x, int y){
 		super(color, lastUpdated, lifeTime, x, y, 15.0f);
+		grid = Game.game.grid;
 	}
 	
 	
