@@ -12,7 +12,7 @@ public class BlockWater extends Block{
 	
 	@Override
 	protected Color generateNewColor() {
-		return TextureLoader.loader.getPixel(BlockId.Water, x, y, (int)Game.getCurrentFrame() / 200 % 2);
+		return TextureLoader.loader.getPixel(BlockId.Water, x, y, (int)Game.game.getCurrentFrame() / 200 % 2);
 		//return new Cdsdsolor(24,(int) (Math.random() * (220 - 200)) + 200, 226);
 	}
 	
@@ -32,7 +32,7 @@ public class BlockWater extends Block{
 	}
 	
 	@Override
-    public void update(int x, int y, Grid grid){
+    public void update(int x, int y){
 		
 		this.x = x;
 		this.y = y;

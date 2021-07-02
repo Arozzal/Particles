@@ -41,7 +41,7 @@ public class BlockCorruption extends Block{
 
 
 	@Override
-	public void update(int x, int y, Grid grid) {
+	public void update(int x, int y) {
 		
 		if(grid.get(x, y + 1).isSolid() == false) {
 			if(Game.roll(200)) {

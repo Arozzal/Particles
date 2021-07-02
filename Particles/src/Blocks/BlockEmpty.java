@@ -1,9 +1,7 @@
 package Blocks;
-import java.awt.Color;
 
 import Game.*;
 import Textures.TextureLoader;
-import Textures.TextureLoader.TextureContainer;
 
 public class BlockEmpty extends Block{
 	public BlockEmpty(long lastUpdated, int x, int y){
@@ -21,7 +19,7 @@ public class BlockEmpty extends Block{
 	}
 
 	@Override
-	public void update(int x, int y, Grid grid) {
+	public void update(int x, int y) {
 		// TODO Auto-generated method stub
 		
 	}

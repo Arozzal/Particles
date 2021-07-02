@@ -37,7 +37,7 @@ public class BlockFire extends Block{
 	}
 	
 	@Override
-	public void update(int x, int y, Grid grid) {
+	public void update(int x, int y) {
 		if (Game.roll(100)){
 			return;
 		}

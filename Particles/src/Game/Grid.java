@@ -2,16 +2,14 @@ package Game;
 import Blocks.*;
 
 public class Grid {
-	
 	Block[] levelGrid;
-	final Block outOfLevelBlock;
+	final Block outOfLevelBlock = new BlockOutOfLevel(0, 0, 0, 0);
 	
 	int sizex;
 	int sizey;
 	
 	
-	Grid(int sizex, int sizey){
-		outOfLevelBlock = new BlockOutOfLevel(0, 0, 0, 0);
+	public Grid(int sizex, int sizey){
 		levelGrid = new Block[sizex * sizey];
 		this.sizex = sizex;
 		this.sizey = sizey;
@@ -21,7 +19,6 @@ public class Grid {
 				//levelGrid[y * sizex + x] = new BlockWood(null, -1, 100000000);
 			}
 		}
-		
 	}
 	
 	/**
@@ -106,7 +103,7 @@ public class Grid {
 		case Corruption: set(new BlockCorruption(null, bk.getLastUpdated(), -1, x, y), x, y); break;
 		case Steam: set(new BlockSteam(null, bk.getLastUpdated(), -1, x, y), x, y); break;
 		case None: set(new BlockEmpty(bk.getLastUpdated(), x, y), x, y); break;
-		default: System.err.print("Unknown Block Id " + id.toString()); break;
+		default: break;
 		}
 	}
 }

@@ -4,7 +4,6 @@ import java.awt.Color;
 
 import Game.Game;
 import Game.Grid;
-import Textures.TextureLoader;
 
 public class BlockSteam extends Block{
 
@@ -14,7 +13,7 @@ public class BlockSteam extends Block{
 
 	@Override
 	protected long generateNewLifetime() {
-		return Game.getRandomInt(1200, 3000);
+		return Game.getRandomInt(1200, 10000);
 	}
 	
 	@Override
@@ -24,30 +23,26 @@ public class BlockSteam extends Block{
 	
 	@Override
 	public BlockId getId() {
-		// TODO Auto-generated method stub
-		return null;
+		return BlockId.Steam;
 	}
 
 	@Override
 	public boolean isSolid() {
-		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
 	public boolean isFlammable() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean isLiquid() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public void update(int x, int y, Grid grid) {
+	public void update(int x, int y) {
 		
 		if(getLifeTime() < 10) {
 			grid.generateNewBlock(BlockId.Water, x, y);

@@ -1,7 +1,6 @@
 package Blocks;
 import java.awt.Color;
 
-import Game.Game;
 import Game.Grid;
 import Textures.TextureLoader;
 
@@ -33,8 +32,7 @@ public class BlockWood extends Block{
 	}
 
 	@Override
-	public void update(int x, int y, Grid grid) {
-		// TODO Auto-generated method stub
+	public void update(int x, int y) {
 		
 	}
 	

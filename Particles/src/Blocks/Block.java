@@ -10,6 +10,7 @@ public abstract class Block {
 	protected int x;
 	protected int y;
 	
+	protected Grid grid = Game.game.grid;
 	
 	public Color getColor() {
 		return color;
@@ -77,7 +78,18 @@ public abstract class Block {
 			return true;
 		return false;
 	}
-	
+
+	/**
+	 * Vergleicht die Dichten von beiden Blöcken. 
+	 * Je grösser die Differenz ist, desto höher ist die Chance, 
+	 * dass sie miteinander vertauscht werden.
+	 * 
+	 * @param x1
+	 * @param y1
+	 * @param x2
+	 * @param y2
+	 * @param grid
+	 */
 	protected void checkForDensitySwap(int x1, int y1, int x2, int y2, Grid grid) {
 		float densityDiff = grid.get(x1, y1).getDensity() - grid.get(x2, y2).getDensity();
 		if(densityDiff > 0) {
@@ -94,11 +106,23 @@ public abstract class Block {
 	 * @return The BlockId of this Block
 	 */
 	public abstract BlockId getId();
+	
+	/**
+	 * @return true ob andere Blöcke diesen Block überschreiben können
+	 */
 	public abstract boolean isSolid();
 	public abstract boolean isFlammable();
 	public abstract boolean isLiquid();
 	
-	public abstract void update(int x, int y, Grid grid);
+	/**
+	 * Diese Methode wird von jedem Block im Grid nach einem Frame aufgerufen. 
+	 * Hier soll das Bewegungsverhalten des Blockes programmiert werden
+	 * 
+	 * @param x
+	 * @param y
+	 * @param grid
+	 */
+	public abstract void update(int x, int y);
 
 	
 }

@@ -8,7 +8,7 @@ public class BlockOutOfLevel extends Block{
 	
 	
 	public BlockOutOfLevel(long lastUpdated, long lifeTime, int x, int y){
-		super(Color.white, lastUpdated, lifeTime, x, y, 100000000);
+		super(Color.black, lastUpdated, lifeTime, x, y, 100000000);
 	}
 	
 	@Override
@@ -27,7 +27,7 @@ public class BlockOutOfLevel extends Block{
 	}
 	
 	@Override
-	public void update(int x, int y, Grid grid) {
+	public void update(int x, int y) {
 		
 	}
 	

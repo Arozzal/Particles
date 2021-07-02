@@ -1,25 +1,22 @@
 package Game;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.RenderingHints.Key;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
 import java.awt.image.DataBufferInt;
-import java.awt.image.Raster;
-import java.awt.image.WritableRaster;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -39,25 +36,33 @@ import Blocks.*;
 
 
 public class Game{
+	public static final Game game = new Game();
+	public final Grid grid;
+	Date date;
 	
-	static Grid grid;
-	static Date date;
+	JFrame frame;
+	ArrayList<JButton> buttonList = new ArrayList<JButton>();
+	JSlider slider;
 	
-	static int sizex;
-	static int sizey;
-	static int blockSize;
-	static int viewOffsetX = 0;
-	static int viewOffsetY = 0;
-	static boolean keyW = false;
-	static boolean keyS = false;
-	static boolean keyA = false;
-	static boolean keyD = false;
+	int sizex;
+	int sizey;
+	int blockSize;
 	
-	static int butId = 1;
+	float viewOffsetX = 0;
+	float viewOffsetY = 0;
+	float viewSizeX = 0;
+	float viewSizeY = 0;
 	
-	static int placementRadius = 20;
+	boolean keyW = false;
+	boolean keyS = false;
+	boolean keyA = false;
+	boolean keyD = false;
 	
-	static long currentFrame = 0;
+	int butId = 1;
+	
+	int placementRadius = 20;
+	
+	long currentFrame = 0;
 	
 	static long lastTime = 0;
 	static long elapsedTime = 0;
@@ -69,16 +74,9 @@ public class Game{
 	
 	WorldCanvas worldCanvas;
 	
-	public static long getCurrentFrame() {
+	public long getCurrentFrame() {
 		return currentFrame;
-	}
-	
-	public void initGrid(int sx, int sy, int bs) {
-		sizex = sx;
-		sizey = sy;
-		blockSize = bs;
-		grid = new Grid(sx, sy);
-	}
+	}	
 	
 	public static long getMillis() {
 		return ZonedDateTime.now().toInstant().toEpochMilli();
@@ -104,10 +102,15 @@ public class Game{
 		return false;
 	}
 	
-	public void run(String[] args) throws InterruptedException {
-    	
+	public Game() {
 		
-    	initGrid(1200, 600, 2);
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+
+		sizex = 1200;
+		sizey = 600;
+		blockSize = 2;
+		grid = new Grid(sizex, sizey);
+		
     	date = new Date();
     	
     	try {
@@ -117,16 +120,20 @@ public class Game{
 			e1.printStackTrace();
 		}
     	
-    	JFrame frame = new JFrame("Particles");
-        
+    	frame = new JFrame("Particles");
+    	
+    	
+    	
     	worldCanvas = new WorldCanvas();
+    	
+    	
+    	
         frame.add(worldCanvas);
         
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
         frame.setSize(sizex * blockSize, sizey * blockSize + 100);
-        frame.setResizable(false);
         lastTime = getMillis();
         
         for(int i = 1; i < BlockId.values().length - 1; i++) {
@@ -136,6 +143,7 @@ public class Game{
 	        but.setBounds(2 + 102 * (i - 1), sizey * blockSize + 2, 100, 50);
 	        but.putClientProperty("id", i);
 	        worldCanvas.add(but);
+	        buttonList.add(but);
 	        but.addActionListener(new ActionListener() {		
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -148,7 +156,16 @@ public class Game{
 			});
         }
         
-        JSlider slider = new JSlider(0, 50, 20);
+        frame.addComponentListener(new ComponentAdapter() {
+    	    public void componentResized(ComponentEvent componentEvent) {
+    	    	for(int i = 0; i < buttonList.size(); i++) {
+    	    		buttonList.get(i).setBounds(2 + 102 * i, worldCanvas.getSize().height - 2 - 50, 100, 50);
+    	    	}
+    	    	slider.setBounds(worldCanvas.getSize().width - slider.getWidth(), worldCanvas.getSize().height - slider.getHeight() - 2, 100, 50);
+    	    }
+    	});
+        
+        slider = new JSlider(0, 50, 20);
         slider.setPreferredSize(new Dimension(100, 50));
         slider.setBounds(sizex * blockSize - 150, sizey * blockSize + 2, 100, 50);
         slider.setVisible(true);
@@ -180,11 +197,7 @@ public class Game{
         frame.addKeyListener(new KeyListener() {
 			
 			@Override
-			public void keyTyped(KeyEvent e) {
-
-				
-				
-			}
+			public void keyTyped(KeyEvent e) {}
 			
 			@Override
 			public void keyReleased(KeyEvent e) {
@@ -214,45 +227,65 @@ public class Game{
 			public void mouseWheelMoved(MouseWheelEvent e) {
 				int deltaScroll = e.getWheelRotation();
 				
-				
+				int oldBlockSize = blockSize;
 				
 				blockSize += deltaScroll;
 				if(blockSize < 1)blockSize = 1;
 				if(blockSize > 9)blockSize = 9;
+				
+				
+				if(oldBlockSize != blockSize) {
+					
+
+					float centerX = viewOffsetX + worldCanvas.getSize().width / oldBlockSize / 4;
+					float centerY = viewOffsetY + worldCanvas.getSize().height / oldBlockSize / 4;
+						
+					float newSizeX = worldCanvas.getSize().width / blockSize;
+					float newSizeY = worldCanvas.getSize().height / blockSize;
+						
+					viewOffsetX = centerX - newSizeX / 4;
+					viewOffsetY = centerY - newSizeY / 4;
+
+					if(viewOffsetX < 0 )viewOffsetX = 0;
+					if(viewOffsetY < 0 )viewOffsetY = 0;
+					
+				}
 			}
-		});
-        
-        
-        
-        int fpsCounter = 0;
-        long lastSecond = 0;
-        
-        while(true) {
-        	long currentTime = getMillis();
-        	elapsedTime += currentTime - lastTime;
-        	
-        	long currSecond = currentTime / 1000;
-        	if(currSecond != lastSecond) {
-        		lastSecond = currSecond;
-        		frame.setTitle("FPS: " + fpsCounter + " Cores: " + coreCount);
-        		fpsCounter = 0;
-        	}
-        	
-        	
-        	if(elapsedTime > fps) {
-        		elapsedTime = 0;
-        		currentFrame++;
-        		
-        		update(frame);
-        		
-        		frame.repaint();
-        		fpsCounter++;
-        	}
-        	
-        	lastTime = currentTime;
-        	
-        }
+		}); 
     }
+	
+	public void gameCycle() {
+		int fpsCounter = 0;
+        long lastSecond = 0;
+		 while(true) {
+	        long currentTime = getMillis();
+	        elapsedTime += currentTime - lastTime;
+	        	
+	        long currSecond = currentTime / 1000;
+	        if(currSecond != lastSecond) {
+	        	lastSecond = currSecond;
+	        	frame.setTitle("FPS: " + fpsCounter + " Cores: " + coreCount);
+	        	fpsCounter = 0;
+	        }
+	        	
+	        	
+	        if(elapsedTime > fps) {
+	        		
+	        	currentFrame++;
+	        		
+	        	try {
+					update(frame);
+				} catch (InterruptedException e1) {e1.printStackTrace();}
+	        		
+	        	elapsedTime = 0;
+	        		
+	        	frame.repaint();
+	        	fpsCounter++;
+	        }
+	        	
+	        lastTime = currentTime;
+		 }
+	}
 	
     public void update(JFrame frame) throws InterruptedException {
     	
@@ -285,10 +318,13 @@ public class Game{
     		}
         }
     	
-    	if(keyW)viewOffsetY--;
-    	if(keyS)viewOffsetY++;
-    	if(keyA)viewOffsetX--;
-    	if(keyD)viewOffsetX++;
+    	int width = worldCanvas.getSize().width;
+    	int height = worldCanvas.getSize().height - 60;
+    	
+    	if(keyW && viewOffsetY >= 0    )viewOffsetY -= 0.25f * elapsedTime;
+    	if(keyS && viewOffsetY <= sizey - height * 0.5f / blockSize)viewOffsetY += 0.25f * elapsedTime;
+    	if(keyA && viewOffsetX >= 0    )viewOffsetX -= 0.25f * elapsedTime;
+    	if(keyD && viewOffsetX <= sizex - width * 0.5f / blockSize)viewOffsetX += 0.25f * elapsedTime;
     	
     	int threadAmount = coreCount + getRandomInt(-1, 10);
     	int partSize = sizex / threadAmount;
@@ -368,27 +404,26 @@ public class Game{
 		}
 		
     	block.setLastUpdated(currentFrame);
-		block.update(x, y, grid);
+		block.update(x, y);
     }
     
     public class WorldCanvas extends JLabel{
     	
 		private static final long serialVersionUID = -3280536400661865030L;
 		
-		
 		@Override
     	protected void paintComponent(Graphics g) {
     		super.paintComponent(g);
     		
-    		int renderX = sizex / blockSize;
-    		int renderY = sizey / blockSize;
+    		int renderX = worldCanvas.getSize().width / 2 / blockSize + 1;
+    		int renderY = worldCanvas.getSize().height / 2 / blockSize + 1;
     		
     		int[] pixelArray = new int[renderX * renderY];
     		BufferedImage img = new BufferedImage( renderX, renderY, BufferedImage.TYPE_INT_RGB );
    
     		for(int y = 0; y < renderY; y++) {
     			for(int x = 0; x < renderX; x++) {
-    				pixelArray[y * renderX + x] = grid.get(x + viewOffsetX, y + viewOffsetY).getColor().getRGB();
+    				pixelArray[y * renderX + x] = grid.get(x + (int)viewOffsetX, y + (int)viewOffsetY).getColor().getRGB();
                 }
             }  
     		
@@ -400,31 +435,7 @@ public class Game{
     		g.drawImage(img, 0, 0, renderX * blockSize * 2, renderY * blockSize * 2, null);
         }
     	
-    }
-    
-    public class DrawThread implements Runnable{
-
-    	int drawstart;
-    	int drawend;
-    	int[] pixelArray;
-    	
-    	public DrawThread(int drawstart, int drawend, int[] pixelArray) {
-    		this.drawstart = drawstart;
-    		this.drawend = drawend;
-    		this.pixelArray = pixelArray;
-    	}
-    	
-		@Override
-		public void run() {
-			for(int y = drawstart; y < drawend; y++) {
-    			for(int x = 0; x < sizex; x++) {
-    				pixelArray[y * sizex + x] = grid.get(x, y).getColor().getRGB();
-                }
-            }  
-		}
-    	
-    }
-    
+    }    
 }
 
 
