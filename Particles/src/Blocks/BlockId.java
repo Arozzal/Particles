@@ -10,5 +10,7 @@ public enum BlockId {
 	Smoke,
 	Corruption,
 	Steam,
+	Steel,
+	Blackhole,
 	OutofLevel
 }

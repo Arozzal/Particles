@@ -73,9 +73,13 @@ public abstract class Block {
 		return 1000000;
 	}
 	
-	public boolean isId(BlockId id) {
-		if(getId() == id)
-			return true;
+	public boolean isId(BlockId ... ids) {
+		for(int i = 0; i < ids.length; i++) {
+			if(getId() == ids[i])
+				return true;
+		}
+		
+		
 		return false;
 	}
 

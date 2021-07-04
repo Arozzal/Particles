@@ -76,6 +76,7 @@ public class TextureLoader {
 		initTexture("back", BlockId.None);
 		initTexture("wood", BlockId.Wood);
 		initTexture("sand", BlockId.Sand);
+		initTexture("metal", BlockId.Steel);
 		initAnimation("water", BlockId.Water, 3);
 		initAnimation("lava", BlockId.Lava, 16);
 	}

@@ -3,7 +3,6 @@ package Blocks;
 import java.awt.Color;
 
 import Game.Game;
-import Game.Grid;
 
 public class BlockSteam extends Block{
 

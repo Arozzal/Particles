@@ -1,6 +1,5 @@
 package Blocks;
 
-import Game.*;
 import Textures.TextureLoader;
 
 public class BlockEmpty extends Block{

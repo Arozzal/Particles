@@ -2,7 +2,6 @@ package Blocks;
 import java.awt.Color;
 
 import Game.Game;
-import Game.Grid;
 
 public class BlockSmoke extends Block{
 

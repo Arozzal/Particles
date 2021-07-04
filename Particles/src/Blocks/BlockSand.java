@@ -2,7 +2,6 @@ package Blocks;
 import java.awt.Color;
 
 import Game.Game;
-import Game.Grid;
 import Textures.TextureLoader;
 
 public class BlockSand extends Block{

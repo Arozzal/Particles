@@ -2,7 +2,6 @@ package Game;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -78,6 +77,10 @@ public class Game{
 		return currentFrame;
 	}	
 	
+	public boolean isCurrentFrameEven() {
+		return currentFrame % 2 == 0 ? true : false;
+	}
+	
 	public static long getMillis() {
 		return ZonedDateTime.now().toInstant().toEpochMilli();
 	}
@@ -86,6 +89,8 @@ public class Game{
 	public static int getRandomInt(int min, int max) {
 		return ThreadLocalRandom.current().nextInt(min, max);
 	}
+	
+	
 	
 	/**
 	 * Gibt mit der angegeben Chance true zurück.
@@ -131,13 +136,14 @@ public class Game{
         frame.pack();
         frame.setVisible(true);
         frame.setSize(sizex * blockSize, sizey * blockSize + 100);
+        
         lastTime = getMillis();
         
         for(int i = 1; i < BlockId.values().length - 1; i++) {
 	        JButton but = new JButton(BlockId.values()[i].name());
 	        but.setVisible(true);
 	        but.setLayout(null);
-	        but.setBounds(2 + 102 * (i - 1), sizey * blockSize + 2, 100, 50);
+	       // but.setBounds(2 + 102 * (i - 1), sizey * blockSize + 2, 100, 50);
 	        but.putClientProperty("id", i);
 	        worldCanvas.add(but);
 	        buttonList.add(but);
@@ -156,7 +162,7 @@ public class Game{
         frame.addComponentListener(new ComponentAdapter() {
     	    public void componentResized(ComponentEvent componentEvent) {
     	    	for(int i = 0; i < buttonList.size(); i++) {
-    	    		buttonList.get(i).setBounds(2 + 102 * i, worldCanvas.getSize().height - 2 - 50, 100, 50);
+    	    		buttonList.get(i).setBounds(2 + 92 * i, worldCanvas.getSize().height - 2 - 50, 90, 50);
     	    	}
     	    	slider.setBounds(worldCanvas.getSize().width - slider.getWidth(), worldCanvas.getSize().height - slider.getHeight() - 2, 100, 50);
     	    }
@@ -249,6 +255,7 @@ public class Game{
 				}
 			}
 		}); 
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
     }
 	
 	public void gameCycle() {
@@ -325,12 +332,18 @@ public class Game{
     	
     	int threadAmount = coreCount + getRandomInt(-1, 10);
     	int partSize = sizex / threadAmount;
-    	
     	ExecutorService executor = Executors.newFixedThreadPool(threadAmount);
-    	
-    	for(int i = 0; i < threadAmount; i++) {
-    		executor.submit(new UpdateThread(i * partSize, (i + 1) * partSize));
+    	if(roll(2)) {
+    		for(int i = 0; i < threadAmount; i++) {
+        		executor.submit(new UpdateThread(i * partSize, (i + 1) * partSize));
+        	}
     	}
+    	else {
+    		for(int i = threadAmount - 1; i >= 0; i--) {
+        		executor.submit(new UpdateThread(i * partSize, (i + 1) * partSize));
+        	}
+    	}
+    	
     	
     	executor.shutdown();
     	executor.awaitTermination(1, TimeUnit.DAYS);
@@ -347,61 +360,76 @@ public class Game{
     		this.start = start;
     		this.end = end;
     	}
-    	
+    
 		@Override
 		public void run() {
-			switch(getRandomInt(0, 3)) {
-			case 0:
-				for(int x = start; x < end; x++) {
-					for(int y = sizey - 1; y >= 0; y--) {
-						updateBlock(x, y);
-		        	}
-		    	}
-				break;
-			case 1:
-				for(int y = sizey - 1; y >= 0; y--) {
+			
+			if(isCurrentFrameEven()) {
+				switch(getRandomInt(0, 2)) {
+				case 0:
 					for(int x = start; x < end; x++) {
-						updateBlock(x, y);
-		        	}
-		    	}
-				break;
-			case 2:
-				for(int x = start; x < end; x++) {
-					for(int y = 0; y < sizey; y++) {
-						updateBlock(x, y);
-		        	}
-		    	}
-				break;
-			case 3:
-				for(int y = sizey - 1; y >= 0; y--) {
-					for(int x = end -1; x >= 0; x--) {
-						updateBlock(x, y);
-		        	}
-		    	}
-				break;
+						for(int y = sizey - 1; y >= 0; y--) {
+							updateBlock(x, y);
+			        	}
+			    	}
+					break;
+				case 1:
+					for(int y = sizey - 1; y >= 0; y--) {
+						for(int x = start; x < end; x++) {
+							updateBlock(x, y);
+			        	}
+			    	}
+					break;
+				}
 			}
+			else {
+				switch(getRandomInt(0, 2)) {
+				case 0:
+					for(int x = end - 1; x >= start; x--) {
+						for(int y = sizey - 1; y >= 0; y--) {
+							updateBlock(x, y);
+			        	}
+			    	}
+					break;
+				case 1:
+					for(int y = sizey - 1; y >= start; y--) {
+						for(int x = end - 1; x >= 0; x--) {
+							updateBlock(x, y);
+			        	}
+			    	}
+					break;
+				}
+			}
+			
+			
+			
+			
 		}
     }
     
     public void updateBlock(int x, int y) {
     	Block block = grid.get(x, y);
-		
-		if(block.isId(BlockId.None))
-			return;
-		
-		if(block.getLastUpdated() >= currentFrame) {
-			return;
-    	}
+    	synchronized (block) {
+    		if(block.isId(BlockId.None))
+    			return;
     		
-    	block.setLifeTime(block.getLifeTime() - 1);
+    		if(block.getLastUpdated() >= currentFrame) {
+    			return;
+        	}
+        		
+        	block.setLifeTime(block.getLifeTime() - 1);
 
-		if (block.getLifeTime() <= 0){
-			grid.generateNewBlock(BlockId.None, x, y);
-			return;
+    		if (block.getLifeTime() <= 0){
+    			grid.generateNewBlock(BlockId.None, x, y);
+    			return;
+    		}
+    		
+        	block.setLastUpdated(currentFrame);
+    		block.update(x, y);
 		}
 		
-    	block.setLastUpdated(currentFrame);
-		block.update(x, y);
+    	
+		
     }
     
     public class WorldCanvas extends JLabel{

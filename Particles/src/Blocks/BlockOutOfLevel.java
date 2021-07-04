@@ -1,7 +1,6 @@
 package Blocks;
 import java.awt.Color;
 
-import Game.*;
 
 public class BlockOutOfLevel extends Block{
 	

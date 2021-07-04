@@ -43,27 +43,38 @@ public class BlockWater extends Block{
 			grid.move(x, y, x, y + 1);
 			return;
 		}
+		if(Game.game.isCurrentFrameEven()) {
+			if (grid.get(x + 1, y + 1).isSolid() == false){
+				grid.move(x, y, x + 1, y + 1);
+				return;
+			}
+	
+			if (grid.get(x - 1, y + 1).isSolid() == false){
+				grid.move(x, y, x - 1, y + 1);
+				return;
+			}
+		}
+		else {
+			if (grid.get(x - 1, y + 1).isSolid() == false){
+				grid.move(x, y, x - 1, y + 1);
+				return;
+			}
+			if (grid.get(x + 1, y + 1).isSolid() == false){
+				grid.move(x, y, x + 1, y + 1);
+				return;
+			}
+		}
+		
 
-		if (grid.get(x + 1, y + 1).isSolid() == false){
-			grid.move(x, y, x + 1, y + 1);
-			return;
+		if(Game.roll(2)) {
+			if (waterMovement(x, y, 1, grid)){return;}
+			if (waterMovement(x, y, -1, grid)){return;}
 		}
-
-		if (grid.get(x - 1, y + 1).isSolid() == false){
-			grid.move(x, y, x - 1, y + 1);
-			return;
-		}
-		
-		
-
-		
-		if (waterMovement(x, y, 1, grid)){
-			return;
+		else {
+			if (waterMovement(x, y, -1, grid)){return;}
+			if (waterMovement(x, y, 1, grid)){return;}
 		}
 		
-		if (waterMovement(x, y, -1, grid)){
-			return;
-		}
 		
 		if(!Game.roll(250)) {
 			return;

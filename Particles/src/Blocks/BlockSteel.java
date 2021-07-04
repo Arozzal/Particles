@@ -4,8 +4,8 @@ import java.awt.Color;
 import Game.Game;
 import Textures.TextureLoader;
 
-public class BlockWood extends Block{
-	public BlockWood(Color color, long lastUpdated, long lifeTime, int x, int y){
+public class BlockSteel extends Block{
+	public BlockSteel(Color color, long lastUpdated, long lifeTime, int x, int y){
 		super(color, lastUpdated, lifeTime, x, y, 15.0f);
 		grid = Game.game.grid;
 	}
@@ -13,8 +13,7 @@ public class BlockWood extends Block{
 	
 	@Override
 	protected Color generateNewColor() {
-		//return new Color(Game.getRandomInt(70, 100), 51, 0);
-		return TextureLoader.loader.getPixel(BlockId.Wood, x, y, 0);
+		return TextureLoader.loader.getPixel(BlockId.Steel, x, y, 0);
 	}	
 
 	@Override
@@ -29,7 +28,7 @@ public class BlockWood extends Block{
 	
 	@Override
 	public boolean isFlammable() {
-		return true;
+		return false;
 	}
 
 	@Override

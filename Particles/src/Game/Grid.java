@@ -38,7 +38,7 @@ public class Grid {
 	
 	/**
 	 * Setzt den Parameter Block in die angegebenen Korrdinaten.
-	 * Falls die Korrdinaten ungültig sind wird nichts gemacht.
+	 * Falls die Kordinaten ungültig sind wird nichts gemacht.
 	 * @param block 
 	 * @param x
 	 * @param y
@@ -101,6 +101,8 @@ public class Grid {
 		case Smoke: set(new BlockSmoke(null, bk.getLastUpdated(), -1, x, y), x, y); break;
 		case Corruption: set(new BlockCorruption(null, bk.getLastUpdated(), -1, x, y), x, y); break;
 		case Steam: set(new BlockSteam(null, bk.getLastUpdated(), -1, x, y), x, y); break;
+		case Blackhole: set(new BlockBlackhole(null, bk.getLastUpdated(), -1, x, y), x, y); break;
+		case Steel: set(new BlockSteel(null, bk.getLastUpdated(), -1, x, y), x, y); break;
 		case None: set(new BlockEmpty(bk.getLastUpdated(), x, y), x, y); break;
 		default: break;
 		}

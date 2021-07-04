@@ -61,7 +61,7 @@ public class BlockCorruption extends Block{
 				int neighbourCount = getNeighbourCount(x + xx, y + yy, grid);
 				
 				
-				if(block.getId() == BlockId.Corruption) {
+				if(block.isId(BlockId.Corruption)) {
 					if(neighbourCount > 3 || neighbourCount < 2) {
 						block.setLifeTime(0);
 						if(xx == 0 && yy == 0)
@@ -87,7 +87,7 @@ public class BlockCorruption extends Block{
 				if(xx == 0 && y == 0)
 					continue;
 				
-				if(grid.get(x + xx, y + yy).getId() == BlockId.Corruption) {
+				if(grid.get(x + xx, y + yy).isId(BlockId.Corruption)) {
 					neighbourCount++;
 				}
 			}
