@@ -65,14 +65,24 @@ public abstract class Block {
 		
 	}
 	
+	
 	protected Color generateNewColor() {
 		return Color.black;
 	}
 	
+	/**
+	 * Diese Zahl wird jedes frame dekrementiert, wenn sie 0 erreicht, wird der Block gelöscht.
+	 * @return
+	 */
 	protected long generateNewLifetime() {
 		return 1000000;
 	}
 	
+	/**
+	 * Gibt true zurück, wenn eine der übergebenen Ids, der Id dieses Blockes entspricht.
+	 * @param BlockId[] ids
+	 * @return boolean
+	 */
 	public boolean isId(BlockId ... ids) {
 		for(int i = 0; i < ids.length; i++) {
 			if(getId() == ids[i])

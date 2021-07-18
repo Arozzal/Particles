@@ -7,6 +7,12 @@ import javax.imageio.ImageIO;
 
 import Blocks.BlockId;
 
+/**
+ * Diese Klasse lädt Png Bilder
+ * Die Blöcke könenn dann ihre Id und Position angeben, um somit die Farbe der Textur an dieser Stelle zu bekommen.
+ * 
+ *
+ */
 public class TextureLoader {
 
 	public class TextureContainer{
@@ -27,7 +33,11 @@ public class TextureLoader {
 		return img;
 	}
 	
-	
+	/**
+	 * Lädt eine einzelne Textur
+	 * @param path
+	 * @param id
+	 */
 	public void initTexture(String path, BlockId id) {
 		BufferedImage img = loadImage(path);
 		
@@ -41,12 +51,20 @@ public class TextureLoader {
 		containers[id.ordinal()] = container;
 	}
 	
-	public void initAnimation(String path, BlockId id, int amount) {
+	/**
+	 * Lädt mehrere Bilder als Animation.
+	 * Die Bilder müssen am Ende mit Zahlen durchnummeriert sein.
+	 * 
+	 * @param path
+	 * @param id
+	 * @param amount
+	 */
+	public void initAnimation(String path, BlockId id, int amountOfFrames) {
 		TextureContainer container = new TextureContainer();
 		
-		container.data = new BufferedImage[amount];
+		container.data = new BufferedImage[amountOfFrames];
 		
-		for(int i = 0; i < amount; i++) {
+		for(int i = 0; i < amountOfFrames; i++) {
 			BufferedImage img = loadImage(path + i);
 			container.data[i] = img;
 		}
@@ -58,6 +76,16 @@ public class TextureLoader {
 		containers[id.ordinal()] = container;
 	}
 	
+	/**
+	 * Gibt die Farbe des Pixels im Bild an der angegeben Stelle zurück.
+	 * Die x, y angaben werden modulisiert, damit sie niemals auserhalb des Bildes sein können.
+	 * 
+	 * @param id
+	 * @param x
+	 * @param y
+	 * @param pos, Angabe bei einer Animation, welches Frame gewählt werden soll. Bei einer normalen Textur immer 0 eingeben.
+	 * @return Color
+	 */
 	public Color getPixel(BlockId id, int x, int y, int pos) {
 		BufferedImage img = containers[id.ordinal()].data[pos];
 		

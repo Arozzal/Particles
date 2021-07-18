@@ -43,6 +43,10 @@ public class Game{
 	ArrayList<JButton> buttonList = new ArrayList<JButton>();
 	JSlider slider;
 	
+	TutorialWindow tutorialWindow;
+	
+	boolean isGameRunning = true;
+	
 	int sizex;
 	int sizey;
 	int blockSize;
@@ -73,6 +77,10 @@ public class Game{
 	
 	WorldCanvas worldCanvas;
 	
+	/**
+	 * Jedes Frame diese Zahl wird um 1 erhöt.
+	 * @return
+	 */
 	public long getCurrentFrame() {
 		return currentFrame;
 	}	
@@ -81,10 +89,13 @@ public class Game{
 		return currentFrame % 2 == 0 ? true : false;
 	}
 	
+	/**
+	 * Gibt die Millisekunden zurück seit 1950
+	 * @return
+	 */
 	public static long getMillis() {
 		return ZonedDateTime.now().toInstant().toEpochMilli();
 	}
-	
 	
 	public static int getRandomInt(int min, int max) {
 		return ThreadLocalRandom.current().nextInt(min, max);
@@ -122,13 +133,11 @@ public class Game{
 			e1.printStackTrace();
 		}
     	
+    	tutorialWindow = new TutorialWindow();
+    	
     	frame = new JFrame("Particles");
     	
-    	
-    	
     	worldCanvas = new WorldCanvas();
-    	
-    	
     	
         frame.add(worldCanvas);
         
@@ -143,7 +152,6 @@ public class Game{
 	        JButton but = new JButton(BlockId.values()[i].name());
 	        but.setVisible(true);
 	        but.setLayout(null);
-	       // but.setBounds(2 + 102 * (i - 1), sizey * blockSize + 2, 100, 50);
 	        but.putClientProperty("id", i);
 	        worldCanvas.add(but);
 	        buttonList.add(but);
@@ -232,7 +240,7 @@ public class Game{
 				
 				int oldBlockSize = blockSize;
 				
-				blockSize += deltaScroll;
+				blockSize -= deltaScroll;
 				if(blockSize < 1)blockSize = 1;
 				if(blockSize > 9)blockSize = 9;
 				
@@ -256,12 +264,18 @@ public class Game{
 			}
 		}); 
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
+        tutorialWindow.show();
     }
 	
+	/**
+	 * Läuft in einer endloss Schleife durch und zählt die Zeit,
+	 * sobald genug Zeit vergangen ist, wird die update Funktion aufgerufen.
+	 * Dies wird gemacht um eine Konstante Framerate zu erzielen
+	 */
 	public void gameCycle() {
 		int fpsCounter = 0;
         long lastSecond = 0;
-		 while(true) {
+		 while(isGameRunning) {
 	        long currentTime = getMillis();
 	        elapsedTime += currentTime - lastTime;
 	        	
@@ -290,6 +304,15 @@ public class Game{
 	        lastTime = currentTime;
 		 }
 	}
+	
+	/**
+	 * Diese Funktion wird aufgerufen, wenn es Zeit ist um das ganze Feld zu updaten.
+	 * Mehrere Threads Update Threads werden gestartet um dies zu machen, jeder Thread bekommt eine bestimmte Breite zugeteilt.
+	 * Die Anzahl Threads wird ein bischen randomisiert, damit die Kanten der einzelnen Threads nicht sichtbar ist.
+	 * 
+	 * @param frame
+	 * @throws InterruptedException
+	 */
 	
     public void update(JFrame frame) throws InterruptedException {
     	
@@ -347,10 +370,14 @@ public class Game{
     	
     	executor.shutdown();
     	executor.awaitTermination(1, TimeUnit.DAYS);
-    	
-    	
     }
     
+    /**
+     * Die Thread Klasse
+     * Diese iterriert über alle Blöcke in seinem Bereich und ruft die Update Funktion von denen auf.
+     * Die Reienfolge wird randomisiert, damit die Bewegung in alle Richtungen sich gleich verhält.
+     *
+     */
     public class UpdateThread implements Runnable{
 
     	int start;
@@ -400,13 +427,16 @@ public class Game{
 					break;
 				}
 			}
-			
-			
-			
-			
 		}
     }
     
+    /**
+     * Diese Methode updated ein bestimmtes Pixel an einer bestimmten Korrdinate.
+     * Überprüft ob dieses nicht schon geupdated wurde, während diesen Frames.
+     * 
+     * @param x
+     * @param y
+     */
     public void updateBlock(int x, int y) {
     	Block block = grid.get(x, y);
     	synchronized (block) {
@@ -427,11 +457,13 @@ public class Game{
         	block.setLastUpdated(currentFrame);
     		block.update(x, y);
 		}
-		
-    	
-		
     }
     
+    /**
+     * Diese Klasse ist für das Rendern zuständig
+     * 
+     *
+     */
     public class WorldCanvas extends JLabel{
     	
 		private static final long serialVersionUID = -3280536400661865030L;
@@ -452,15 +484,13 @@ public class Game{
                 }
             }  
     		
-    		
     		final int[] a = ( (DataBufferInt)img.getRaster().getDataBuffer() ).getData();
     		System.arraycopy(pixelArray, 0, a, 0, pixelArray.length);
-
     		
     		g.drawImage(img, 0, 0, renderX * blockSize * 2, renderY * blockSize * 2, null);
         }
-    	
     }    
+    
 }
 
 
